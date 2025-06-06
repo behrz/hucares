@@ -80,8 +80,7 @@ Users complete a 4-question wellness survey:
 interface User {
   id: string
   username: string (unique, 3-20 chars)
-  passwordHash: string
-  email?: string (optional)
+  passwordHash: string (4-digit PIN, bcrypt hashed)
   createdAt: DateTime
   updatedAt: DateTime
   lastLoginAt: DateTime
@@ -153,9 +152,9 @@ interface WeeklyGroupSummary {
 ## 🔐 **Security & Privacy**
 
 ### Authentication
-- Simple username/password authentication
+- Simple username + 4-digit PIN authentication
 - JWT tokens with reasonable expiration (7 days)
-- Password requirements: minimum 8 characters
+- PIN requirements: exactly 4 digits (0-9)
 - Rate limiting on login attempts
 
 ### Privacy Controls
@@ -166,7 +165,7 @@ interface WeeklyGroupSummary {
 - **Group leaving**: Historical data preserved but anonymized
 
 ### Data Security
-- All passwords hashed with bcrypt (12 rounds)
+- All 4-digit PINs hashed with bcrypt (12 rounds)
 - HTTPS enforced across all endpoints
 - Input validation and sanitization
 - SQL injection prevention via Prisma ORM
@@ -201,7 +200,7 @@ interface WeeklyGroupSummary {
 ### 1. **New User Onboarding**
 1. User visits hucares.com
 2. Enters site password (global access control)
-3. Creates account (username + password)
+3. Creates account (username + 4-digit PIN)
 4. Joins group via access code OR creates new group
 5. Completes first check-in
 6. Views initial group results
@@ -278,8 +277,7 @@ interface WeeklyGroupSummary {
 CREATE TABLE users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   username VARCHAR(20) UNIQUE NOT NULL,
-  password_hash VARCHAR(255) NOT NULL,
-  email VARCHAR(255),
+  password_hash VARCHAR(255) NOT NULL, -- 4-digit PIN, bcrypt hashed
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   last_login_at TIMESTAMP WITH TIME ZONE,
@@ -360,7 +358,7 @@ POST /api/auth/register
 POST /api/auth/login
 POST /api/auth/logout
 GET  /api/auth/me
-PUT  /api/auth/change-password
+PUT  /api/auth/change-pin
 ```
 
 ### User Endpoints

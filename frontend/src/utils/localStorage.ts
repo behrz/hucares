@@ -15,7 +15,6 @@ export interface CheckInData {
 export interface UserProfile {
   id: string
   username: string
-  email?: string
   createdAt: string
   currentGroupId?: string
   lastCheckInDate?: string
