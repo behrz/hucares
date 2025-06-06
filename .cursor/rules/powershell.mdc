@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+PowerShell doesn't support the && operator like bash does. Remember this and remember im on a windows machine

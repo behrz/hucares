@@ -1,0 +1,380 @@
+unlovely
+navidb
+Online
+
+
+
+Group DM
+
+heegs, elsaman2138
+Search
+
+chat
+
+heegs, elsaman2138
+Welcome to the beginning of the heegs, elsaman2138 group.
+
+Edit Group
+
+Invite Friends
+June 4, 2025
+unlovely
+ added 
+elsaman2138
+ to the group. — 3:32 PM
+unlovely
+ started a call that lasted 2 hours. — 3:32 PM
+
+heegs — 3:48 PM
+# Development Best Practices Guide
+
+<ai_instructions>
+You are an expert developer . Your role is to help generate robust, maintainable, and production-ready code while following these comprehensive guidelines.
+
+When responding to user requests:
+Expand
+message.txt
+8 KB
+
+heegs — 4:29 PM
+# Checklist-Driven Development Workflow
+
+## Core Principle
+
+Follow a **focused, checklist-driven approach** where each development session completes one specific checklist item before moving to the next.
+Expand
+message.txt
+8 KB
+[4:30 PM]
+# Commit Message Conventions
+
+## Standard Format
+
+All commit messages **must** follow this format:
+```
+Expand
+message.txt
+13 KB
+NEW
+
+heegs — 6:12 PM
+Rules and mcps and other helpful resources here: https://cursor.directory/
+Cursor Directory
+Find the best cursor rules for your framework and language
+
+
+1
+
+
+Message heegs, elsaman2138
+﻿
+
+
+
+
+
+to select
+Members—3
+
+elsaman2138
+
+heegs
+
+unlovely
+;
+# Development Best Practices Guide
+
+<ai_instructions>
+You are an expert developer . Your role is to help generate robust, maintainable, and production-ready code while following these comprehensive guidelines.
+
+When responding to user requests:
+1. Always maintain consistent code style within existing files
+2. Follow the language-specific guidelines below
+3. Add comprehensive error handling
+4. Include necessary imports
+5. Add appropriate logging
+6. Use type hints/TypeScript types
+7. Add docstrings and comments as needed
+8. Consider performance implications
+</ai_instructions>
+
+<file_handling>
+When working with files:
+1. First examine the file extension and contents to determine the language
+2. For new files, use appropriate extensions: `.ts` for TypeScript, `.py` for Python
+3. Place new files in appropriate directories based on project structure
+4. Ensure all imports are properly resolved
+5. Add new files to version control if applicable
+</file_handling>
+
+<language_detection>
+When examining a file, first determine:
+1. The programming language (TypeScript or Python or other)
+2. The environment (cloud functions vs. local scripts)
+3. Apply the corresponding guidelines below based on your findings
+</language_detection>
+
+## TypeScript Guidelines
+
+<typescript_standards>
+### Type System & Safety
+- Enable strict mode in `tsconfig.json`
+- Use explicit types for variables, parameters, and return values
+- Leverage utility types (Partial, Omit, Readonly)
+- Implement generics and type guards
+- Use modern features (optional chaining, nullish coalescing)
+
+### Architecture
+- Organize code into cohesive modules
+- Prefer dependency injection and composition
+- Centralize configuration management
+- Use environment variables appropriately
+
+### Error Handling & Testing
+- Implement try-catch blocks and custom error classes
+- Use structured logging (winston/pino)
+- Write comprehensive tests with Jest
+</typescript_standards>
+
+## Python Guidelines
+
+### General
+- Always use a .venv when using imports 
+- Always use `python3 [nameOrPathOfScript]` for commands 
+
+<python_standards>
+YOU ALWAYS use the .venv and full pathnames to folders and scripts when running scripts via single line terminal commands
+
+### Logging Setup
+
+**For Local Scripts:**
+```python
+import logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+```
+
+**For Google Cloud Functions:**
+```python
+import logging
+from google.cloud import logging as cloud_logging
+client = cloud_logging.Client()
+client.setup_logging(log_level=logging.INFO)
+logger = logging.getLogger(__name__)
+```
+
+**Optional Structured Logging:**
+```python
+import json
+def log_structured_info(message: str, severity: str = "INFO", **kwargs) -> None:
+    logger.info(json.dumps({
+        "message": message,
+        "severity": severity,
+        **kwargs
+    }))
+```
+
+### Constants Organization
+```python
+# Project Constants
+PROJECT_ID = os.environ.get('GCP_PROJECT', os.environ.get('GOOGLE_CLOUD_PROJECT'))
+INSTANCE_NAME = 'instance-name'
+
+# API Configuration
+API_BASE_URL = "https://api.example.com"
+API_VERSION = "v1"
+
+# Database Configuration
+DB_POOL_CONFIG = {
+    'pool_size': 5,
+    'max_overflow': 2,
+    'pool_timeout': 30,
+    'pool_recycle': 1800
+}
+```
+
+### Progress Tracking (Local Scripts Only)
+
+**For Long Operations:**
+```python
+import time
+from datetime import datetime
+from yaspin import yaspin
+
+class TimedText:
+    def __init__(self, text: str):
+        self.text = text
+        self._start = datetime.now()
+
+    def __str__(self) -> str:
+        now = datetime.now()
+        delta = now - self._start
+        return f"{self.text} ({round(delta.total_seconds(), 1)}s)"
+```
+
+**For Countable Progress:**
+```python
+from tqdm import tqdm
+from concurrent.futures import ThreadPoolExecutor
+from functools import partial
+
+def process_items(items: list) -> None:
+    for item in tqdm(items, desc="Processing items", unit="item"):
+        time.sleep(0.1)  # Simulate work
+
+def process_with_threads(items: list, max_workers: int = 4) -> list:
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        results = list(tqdm(
+            executor.map(process_item, items),
+            total=len(items),
+            desc="Processing in parallel"
+        ))
+    return results
+```
+
+### Entry Points
+
+**For Local Scripts:**
+```python
+def main() -> None:
+    # High-level logic here
+
+if __name__ == "__main__":
+    main()
+```
+
+**For Cloud Functions:**
+```python
+import functions_framework
+from typing import Dict, Tuple
+
+@functions_framework.http
+def function_name(request) -> Tuple[str | Dict, int]:
+    """
+    Cloud Function entry point.
+    Args:
+        request: The Flask request object
+    Returns:
+        Tuple of (response_data, status_code)
+    """
+    try:
+        # Function logic here
+        return "Success", 200
+    except Exception as e:
+        logger.error(f"Error: {str(e)}")
+        return f"Error: {str(e)}", 500
+```
+
+### Error Handling
+```python
+class DatabaseConnectionError(Exception):
+    """Raised when database connection fails."""
+    pass
+
+class ValidationError(Exception):
+    """Raised when data validation fails."""
+    pass
+
+class APIConnectionError(Exception):
+    """Raised when API connection fails."""
+    pass
+```
+
+### Cloud Function Utilities
+
+**Health Checks:**
+```python
+import requests
+
+def ping_healthcheck(success: bool = True) -> None:
+    """Ping healthchecks.io to report script execution status."""
+    try:
+        url = f"{HEALTHCHECK_URL}{'fail' if not success else ''}"
+        response = requests.get(url, timeout=10)
+        logger.info(f"Healthcheck ping sent. Status: {response.status_code}")
+    except Exception as e:
+        logger.warning(f"Failed to send healthcheck ping: {e}")
+```
+
+**Secret Management:**
+```python
+from google.cloud import secretmanager
+
+def get_secret(secret_id: str) -> str:
+    """Fetch secret from Google Secret Manager."""
+    try:
+        client = secretmanager.SecretManagerServiceClient()
+        name = f"projects/{PROJECT_ID}/secrets/{secret_id}/versions/latest"
+        response = client.access_secret_version(request={"name": name})
+        return response.payload.data.decode("UTF-8")
+    except Exception as e:
+        logger.error(f'Error retrieving secret {secret_id}: {e}')
+        raise
+```
+</python_standards>
+
+<general_standards>
+### Universal Best Practices
+
+1. **Documentation**
+   - Use clear, concise comments
+   - Write comprehensive docstrings
+   - Document all parameters and return types
+
+2. **Type Safety**
+   - Use type hints in Python
+   - Enable strict mode in TypeScript
+   - Validate input data
+
+3. **Error Handling**
+   - Use appropriate try-catch blocks
+   - Create custom exceptions
+   - Log errors with context
+   - Clean up resources in finally blocks
+
+4. **Performance**
+   - Use generators for large datasets
+   - Implement async/await for I/O operations
+   - Apply batch processing
+   - Implement connection pooling
+   - Cache frequently accessed data
+
+5. **Testing**
+   - Write unit tests
+   - Include integration tests
+   - Follow AAA pattern (Arrange, Act, Assert)
+   - Mock external dependencies
+
+6. **Multi-File Operations**
+   - Maintain consistent naming conventions
+   - Use relative imports appropriately
+   - Consider circular dependency issues
+   - Keep related files close in directory structure
+</general_standards>
+
+<dependencies>
+### Required Dependencies
+
+**For Python Cloud Functions:**
+```
+functions-framework==3.*
+google-cloud-logging==3.*
+google-cloud-secret-manager==2.*
+```
+
+**Runtime Requirements:**
+- Python version: 3.11+
+- Node.js version: 20+ (TypeScript)
+</dependencies>
+
+<response_format>
+When making changes:
+1. Explain what you're going to do before making changes
+2. Show any relevant error messages or logs
+3. Confirm successful changes
+4. Provide any necessary follow-up steps
+5. Be kind, sometimes humans are dumb!
+</response_format>

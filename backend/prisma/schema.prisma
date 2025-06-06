@@ -1,0 +1,126 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Users table - Core user authentication and profile
+model User {
+  id            String   @id @default(cuid())
+  username      String   @unique
+  passwordHash  String   @map("password_hash")
+  email         String?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  lastLoginAt   DateTime? @map("last_login_at")
+  isActive      Boolean  @default(true) @map("is_active")
+
+  // Relationships
+  createdGroups      Group[]           @relation("GroupCreator")
+  groupMemberships   GroupMembership[]
+  checkIns          CheckIn[]
+
+  @@map("users")
+  @@index([username])
+  @@index([email])
+  @@index([isActive])
+}
+
+// Groups table - Friend groups for check-ins
+model Group {
+  id           String   @id @default(cuid())
+  name         String
+  description  String?
+  accessCode   String   @unique @map("access_code")
+  createdBy    String   @map("created_by")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  isActive     Boolean  @default(true) @map("is_active")
+  maxMembers   Int      @default(20) @map("max_members")
+
+  // Relationships
+  creator              User                   @relation("GroupCreator", fields: [createdBy], references: [id])
+  memberships          GroupMembership[]
+  checkIns            CheckIn[]
+  weeklyGroupSummaries WeeklyGroupSummary[]
+
+  @@map("groups")
+  @@index([accessCode])
+  @@index([createdBy])
+  @@index([isActive])
+}
+
+// Group memberships - Many-to-many relationship between users and groups
+model GroupMembership {
+  id       String   @id @default(cuid())
+  userId   String   @map("user_id")
+  groupId  String   @map("group_id")
+  joinedAt DateTime @default(now()) @map("joined_at")
+  role     String   @default("MEMBER")
+  isActive Boolean  @default(true) @map("is_active")
+
+  // Relationships
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, groupId])
+  @@map("group_memberships")
+  @@index([userId])
+  @@index([groupId])
+  @@index([isActive])
+}
+
+// Check-ins table - Weekly wellness survey responses
+model CheckIn {
+  id              String   @id @default(cuid())
+  userId          String   @map("user_id")
+  groupId         String   @map("group_id")
+  weekStartDate   DateTime @map("week_start_date")
+  productiveScore Int      @map("productive_score")
+  satisfiedScore  Int      @map("satisfied_score")
+  bodyScore       Int      @map("body_score")
+  careScore       Int      @map("care_score")
+  huCaresScore    Int      @map("hu_cares_score")
+  submittedAt     DateTime @default(now()) @map("submitted_at")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, groupId, weekStartDate])
+  @@map("check_ins")
+  @@index([userId, groupId])
+  @@index([weekStartDate])
+  @@index([groupId, weekStartDate])
+}
+
+// Weekly group summaries - Aggregated data for group analytics
+model WeeklyGroupSummary {
+  id                    String   @id @default(cuid())
+  groupId               String   @map("group_id")
+  weekStartDate         DateTime @map("week_start_date")
+  averageHuCaresScore   Float    @map("average_hu_cares_score")
+  totalCheckIns         Int      @map("total_check_ins")
+  participationRate     Float    @map("participation_rate")
+  highestScore          Int      @map("highest_score")
+  lowestScore           Int      @map("lowest_score")
+  createdAt             DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, weekStartDate])
+  @@map("weekly_group_summaries")
+  @@index([groupId])
+  @@index([weekStartDate])
+}
+
+// Note: SQLite doesn't support enums, so we use strings with validation in the application layer
+// Valid roles: "MEMBER", "ADMIN" 
