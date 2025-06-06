@@ -34,15 +34,11 @@ export const registerValidation = [
       return true;
     }),
   body('password')
-    .isLength({ min: 8 })
-    .withMessage('Password must be at least 8 characters long')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
-    .withMessage('Password must contain at least one uppercase letter, one lowercase letter, and one number'),
-  body('email')
-    .optional()
-    .isEmail()
-    .withMessage('Must be a valid email address')
-    .normalizeEmail(),
+    .isLength({ min: 4, max: 4 })
+    .withMessage('PIN must be exactly 4 digits')
+    .matches(/^\d{4}$/)
+    .withMessage('PIN must be exactly 4 digits (0-9)'),
+
 ];
 
 export const loginValidation = [
@@ -60,10 +56,10 @@ export const changePasswordValidation = [
     .notEmpty()
     .withMessage('Current password is required'),
   body('newPassword')
-    .isLength({ min: 8 })
-    .withMessage('New password must be at least 8 characters long')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
-    .withMessage('New password must contain at least one uppercase letter, one lowercase letter, and one number'),
+    .isLength({ min: 4, max: 4 })
+    .withMessage('New PIN must be exactly 4 digits')
+    .matches(/^\d{4}$/)
+    .withMessage('New PIN must be exactly 4 digits (0-9)'),
 ];
 
 // Helper to check validation results
@@ -83,7 +79,7 @@ const checkValidation = (req: Request): void => {
 export const register = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   checkValidation(req);
 
-  const { username, password, email } = req.body;
+  const { username, password } = req.body;
 
   logger.info(`📝 Registration attempt for username: ${username}`);
 
@@ -101,22 +97,6 @@ export const register = asyncHandler(async (req: Request, res: Response): Promis
     return;
   }
 
-  // Check if email already exists (if provided)
-  if (email) {
-    const existingEmail = await db.user.findFirst({
-      where: { email: email.toLowerCase() },
-    });
-
-    if (existingEmail) {
-      res.status(409).json({
-        error: 'Conflict',
-        message: 'Email already registered',
-        timestamp: new Date().toISOString(),
-      });
-      return;
-    }
-  }
-
   // Hash password
   const hashedPassword = await bcrypt.hash(password, env.BCRYPT_SALT_ROUNDS);
 
@@ -125,7 +105,7 @@ export const register = asyncHandler(async (req: Request, res: Response): Promis
     data: {
       username: username.toLowerCase(),
       passwordHash: hashedPassword,
-      email: email ? email.toLowerCase() : null,
+      email: null,
       lastLoginAt: new Date(),
     },
   });

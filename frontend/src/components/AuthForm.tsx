@@ -9,7 +9,6 @@ export default function AuthForm({ onComplete }: AuthFormProps) {
   const [mode, setMode] = useState<'login' | 'signup'>('login')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [email, setEmail] = useState('')
   
   const createUser = useUserStore(state => state.createUser)
   const loginUser = useUserStore(state => state.loginUser)
@@ -27,7 +26,7 @@ export default function AuthForm({ onComplete }: AuthFormProps) {
       if (mode === 'login') {
         success = await loginUser(username, password)
       } else {
-        success = await createUser(username, password, email || undefined)
+        success = await createUser(username, password)
       }
       
       if (success) {
@@ -111,47 +110,30 @@ export default function AuthForm({ onComplete }: AuthFormProps) {
 
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-            Password *
+            4-Digit PIN *
           </label>
           <input
-            type="password"
+            type="text"
             id="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="input-field"
-            placeholder={mode === 'login' ? 'Enter your password' : 'Create a secure password'}
-            minLength={8}
+            onChange={(e) => {
+              const value = e.target.value.replace(/\D/g, '').slice(0, 4);
+              setPassword(value);
+            }}
+            className="input-field text-center text-lg tracking-widest"
+            placeholder="1234"
+            maxLength={4}
+            pattern="\d{4}"
             required
             disabled={isLoading}
-            autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+            autoComplete="off"
           />
-          {mode === 'signup' && (
-            <p className="text-xs text-gray-500 mt-1">
-              At least 8 characters with uppercase, lowercase, and number
-            </p>
-          )}
+          <p className="text-xs text-gray-500 mt-1">
+            Enter any 4 digits (like 1234 or 9876)
+          </p>
         </div>
 
-        {mode === 'signup' && (
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-              Email (optional)
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="input-field"
-              placeholder="your@email.com"
-              disabled={isLoading}
-              autoComplete="email"
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              For notifications and account recovery (optional)
-            </p>
-          </div>
-        )}
+
 
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-3">

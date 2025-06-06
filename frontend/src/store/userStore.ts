@@ -20,7 +20,7 @@ interface UserState {
 
 interface UserActions {
   initializeUser: () => Promise<void>
-  createUser: (username: string, password: string, email?: string) => Promise<boolean>
+  createUser: (username: string, password: string) => Promise<boolean>
   loginUser: (username: string, password: string) => Promise<boolean>
   updateUser: (updates: Partial<UserProfile>) => Promise<boolean>
   logoutUser: () => Promise<void>
@@ -107,10 +107,10 @@ export const useUserStore = create<UserStore>((set, get) => ({
     }
   },
 
-  // Create a new user with username and password
-  createUser: async (username: string, password: string, email?: string) => {
+  // Create a new user with username and 4-digit PIN
+  createUser: async (username: string, password: string) => {
     if (!username.trim() || !password.trim()) {
-      set({ error: 'Username and password are required' })
+      set({ error: 'Username and PIN are required' })
       return false
     }
 
@@ -121,16 +121,16 @@ export const useUserStore = create<UserStore>((set, get) => ({
       return false
     }
 
-    // Validate password (minimum 8 characters)
-    if (password.length < 8) {
-      set({ error: 'Password must be at least 8 characters long' })
+    // Validate PIN (exactly 4 digits)
+    if (!/^\d{4}$/.test(password)) {
+      set({ error: 'PIN must be exactly 4 digits (0-9)' })
       return false
     }
 
     set({ isLoading: true, error: null })
 
     try {
-      const response = await api.auth.register(username.trim(), password, email?.trim())
+      const response = await api.auth.register(username.trim(), password)
       
       if (response.success && response.data) {
         const userProfile = mapApiUserToProfile(response.data.user)

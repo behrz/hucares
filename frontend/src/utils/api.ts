@@ -169,11 +169,10 @@ const httpClient = new HttpClient(API_BASE_URL);
 
 // API service classes
 export class AuthAPI {
-  static async register(username: string, password: string, email?: string): Promise<ApiResponse<{ user: User; tokens: AuthTokens }>> {
+  static async register(username: string, password: string): Promise<ApiResponse<{ user: User; tokens: AuthTokens }>> {
     const response = await httpClient.post<{ user: User; tokens: AuthTokens }>('/auth/register', {
       username,
       password,
-      email,
     });
     
     if (response.success && response.data?.tokens?.accessToken) {
