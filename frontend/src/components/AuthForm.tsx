@@ -127,7 +127,7 @@ export default function AuthForm({ onComplete }: AuthFormProps) {
           />
           {mode === 'signup' && (
             <p className="text-xs text-gray-500 mt-1">
-              At least 8 characters long
+              At least 8 characters with uppercase, lowercase, and number
             </p>
           )}
         </div>
