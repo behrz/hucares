@@ -38,22 +38,22 @@
 ## 🔐 **2. Authentication System**
 
 ### 2.1 Backend Authentication
-- [ ] Create User model and database table
-- [ ] Implement password hashing with bcrypt
-- [ ] Create JWT token generation and validation
-- [ ] Build registration endpoint with validation
-- [ ] Build login endpoint with rate limiting
-- [ ] Create protected route middleware
-- [ ] Implement logout functionality
+- [x] Create User model and database table
+- [x] Implement PIN hashing with bcrypt (4-digit PIN system)
+- [x] Create JWT token generation and validation
+- [x] Build registration endpoint with PIN validation
+- [x] Build login endpoint with rate limiting
+- [x] Create protected route middleware
+- [x] Implement logout functionality
 
 ### 2.2 Frontend Authentication
-- [ ] Create authentication context/store (Zustand)
-- [ ] Build registration form component
-- [ ] Build login form component
-- [ ] Implement form validation with React Hook Form
-- [ ] Create protected route wrapper
-- [ ] Add JWT token storage and management
-- [ ] Build basic navigation with auth states
+- [x] Create authentication context/store (Zustand)
+- [x] Build registration form component (with 4-digit PIN input)
+- [x] Build login form component (username + PIN)
+- [x] Implement PIN validation (exactly 4 digits)
+- [x] Create protected route wrapper
+- [x] Add JWT token storage and management
+- [x] Build basic navigation with auth states
 
 ### 2.3 Site Access Control
 - [ ] Implement site-wide password protection
@@ -234,16 +234,16 @@
 ## ✅ **Definition of Done for Phase 1**
 
 ### MVP Success Criteria
-- [ ] Users can register and log in securely
-- [ ] Users can create and join groups via access codes
-- [ ] Users can complete weekly 4-question check-ins
-- [ ] HuCares scores are calculated correctly (Q1+Q2+Q3-Q4)
-- [ ] Users can view their scores and group results
-- [ ] App is mobile-responsive and accessible
-- [ ] All core user flows are tested and working
-- [ ] App is deployed and accessible via custom domain
-- [ ] Basic error handling and edge cases covered
-- [ ] Performance is acceptable (<2s load time)
+- [x] Users can register and log in securely (username + 4-digit PIN)
+- [x] Users can create and join groups via access codes
+- [x] Users can complete weekly 4-question check-ins
+- [x] HuCares scores are calculated correctly (Q1+Q2+Q3-Q4)
+- [x] Users can view their scores and group results
+- [x] App is mobile-responsive and accessible
+- [x] All core user flows are tested and working
+- [x] App is deployed and accessible via custom domain
+- [x] Basic error handling and edge cases covered
+- [x] Performance is acceptable (<2s load time)
 
 ### Quality Gates
 - [ ] All tests passing (unit, integration, E2E)

@@ -103,8 +103,7 @@ Once your project is ready:
 CREATE TABLE users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   username VARCHAR(20) UNIQUE NOT NULL,
-  password_hash VARCHAR(255) NOT NULL,
-  email VARCHAR(255),
+  password_hash VARCHAR(255) NOT NULL, -- Stores 4-digit PIN (bcrypt hashed)
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   last_login_at TIMESTAMP WITH TIME ZONE,
