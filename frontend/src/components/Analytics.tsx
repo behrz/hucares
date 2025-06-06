@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useUser } from '../store/userStore'
-import { storage, CheckInData } from '../utils/localStorage'
+import { storage } from '../utils/localStorage'
 
 interface AnalyticsProps {
   onClose: () => void

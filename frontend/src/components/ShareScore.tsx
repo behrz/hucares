@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react'
 import { useUser } from '../store/userStore'
-import { storage } from '../utils/localStorage'
 
 interface ShareScoreProps {
   data: {

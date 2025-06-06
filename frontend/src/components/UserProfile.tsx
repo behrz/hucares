@@ -25,8 +25,8 @@ export default function UserProfile({ onClose }: UserProfileProps) {
 
   if (!user) return null
 
-  const handleSave = () => {
-    const success = updateUser({
+  const handleSave = async () => {
+    const success = await updateUser({
       username: editData.username,
       email: editData.email || undefined
     })

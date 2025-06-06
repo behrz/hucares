@@ -1,4 +1,4 @@
-import { GroupData, FriendData, CheckInData, generateId, generateAccessCode } from './localStorage'
+import { GroupData, FriendData, CheckInData, generateId } from './localStorage'
 
 // Sample groups for users to join
 export const MOCK_GROUPS: GroupData[] = [

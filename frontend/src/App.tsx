@@ -40,7 +40,7 @@ function App() {
     }
   }
 
-  const handleGroupJoinSuccess = (groupName: string) => {
+  const handleGroupJoinSuccess = (_groupName: string) => {
     setShowGroupJoin(false)
     setCurrentStep('welcome')
     // You could show a success message here

@@ -20,7 +20,7 @@ export default function UserSetup({ onComplete }: UserSetupProps) {
     
     setIsSubmitting(true)
     
-    const success = createUser(username, email || undefined)
+    const success = await createUser(username.trim(), 'temp-password', email.trim() || undefined)
     
     if (success) {
       onComplete()
