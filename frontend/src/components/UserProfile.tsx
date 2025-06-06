@@ -19,16 +19,14 @@ export default function UserProfile({ onClose }: UserProfileProps) {
   const [showNotifications, setShowNotifications] = useState(false)
   const [showAnalytics, setShowAnalytics] = useState(false)
   const [editData, setEditData] = useState({
-    username: user?.username || '',
-    email: user?.email || ''
+    username: user?.username || ''
   })
 
   if (!user) return null
 
   const handleSave = async () => {
     const success = await updateUser({
-      username: editData.username,
-      email: editData.email || undefined
+      username: editData.username
     })
     
     if (success) {
@@ -38,8 +36,7 @@ export default function UserProfile({ onClose }: UserProfileProps) {
 
   const handleCancel = () => {
     setEditData({
-      username: user.username,
-      email: user.email || ''
+      username: user.username
     })
     setIsEditing(false)
   }
@@ -139,22 +136,7 @@ Type "DELETE" to confirm:`
               )}
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email
-              </label>
-              {isEditing ? (
-                <input
-                  type="email"
-                  value={editData.email}
-                  onChange={(e) => setEditData(prev => ({ ...prev, email: e.target.value }))}
-                  className="input-field"
-                  placeholder="your@email.com"
-                />
-              ) : (
-                <p className="text-gray-600">{user.email || 'Not provided'}</p>
-              )}
-            </div>
+
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
