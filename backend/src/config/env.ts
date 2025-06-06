@@ -49,7 +49,7 @@ export const env: EnvironmentConfig = {
   CORS_ORIGIN: getEnvVar('CORS_ORIGIN', 'http://localhost:3000'),
   REDIS_URL: process.env.REDIS_URL,
   RATE_LIMIT_WINDOW_MS: getEnvVarAsNumber('RATE_LIMIT_WINDOW_MS', 15 * 60 * 1000), // 15 minutes
-  RATE_LIMIT_MAX_REQUESTS: getEnvVarAsNumber('RATE_LIMIT_MAX_REQUESTS', 100),
+  RATE_LIMIT_MAX_REQUESTS: getEnvVarAsNumber('RATE_LIMIT_MAX_REQUESTS', 1000), // Temporarily increased for testing
   BCRYPT_SALT_ROUNDS: getEnvVarAsNumber('BCRYPT_SALT_ROUNDS', 12),
 };
 
