@@ -1,5 +1,5 @@
 // API client for HuCares backend
-const API_BASE_URL = 'http://localhost:3002/api';
+const API_BASE_URL = 'https://hucares.onrender.com/api';
 
 // Types for API responses
 export interface ApiResponse<T = any> {
@@ -307,7 +307,7 @@ export const api = {
   // Test connection
   async testConnection(): Promise<boolean> {
     try {
-      const response = await fetch('http://localhost:3002/health');
+      const response = await fetch('https://hucares.onrender.com/health');
       return response.ok;
     } catch {
       return false;
