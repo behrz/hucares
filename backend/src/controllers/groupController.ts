@@ -4,7 +4,6 @@ import { logger } from '@/utils/logger';
 import { asyncHandler } from '@/middleware/errorHandler';
 import { ValidationError, NotFoundError, ConflictError, ForbiddenError } from '@/middleware/errorHandler';
 import { db } from '@/services/database';
-import { Role } from '@prisma/client';
 
 // Helper to check validation results
 const checkValidation = (req: Request): void => {
@@ -136,7 +135,7 @@ export const createGroup = asyncHandler(async (req: Request, res: Response): Pro
     data: {
       userId: req.user.id,
       groupId: group.id,
-      role: Role.ADMIN,
+      role: 'ADMIN',
     },
   });
 
@@ -436,7 +435,7 @@ export const joinGroup = asyncHandler(async (req: Request, res: Response): Promi
     data: {
       userId: req.user.id,
       groupId: group.id,
-      role: Role.MEMBER,
+      role: 'MEMBER',
     },
   });
 
@@ -486,7 +485,7 @@ export const updateGroup = asyncHandler(async (req: Request, res: Response): Pro
         userId: req.user.id,
         groupId,
         isActive: true,
-        role: Role.ADMIN,
+        role: 'ADMIN',
       },
     });
 
@@ -605,7 +604,7 @@ export const leaveGroup = asyncHandler(async (req: Request, res: Response): Prom
         where: {
           groupId,
           isActive: true,
-          role: Role.ADMIN,
+          role: 'ADMIN',
           userId: { not: req.user.id },
         },
       });
