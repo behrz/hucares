@@ -12,7 +12,6 @@ export interface ApiResponse<T = any> {
 export interface User {
   id: string;
   username: string;
-  email?: string;
   createdAt: string;
   updatedAt: string;
   lastLoginAt?: string;
@@ -45,10 +44,12 @@ export interface CheckIn {
   createdAt: string;
 }
 
-export interface AuthTokens {
-  accessToken: string;
-  refreshToken?: string;
-  expiresIn?: number;
+// Backend auth response structure
+export interface AuthResponse {
+  message: string;
+  user: User;
+  token: string;
+  expiresIn: string;
 }
 
 // Token management
@@ -169,27 +170,27 @@ const httpClient = new HttpClient(API_BASE_URL);
 
 // API service classes
 export class AuthAPI {
-  static async register(username: string, password: string): Promise<ApiResponse<{ user: User; tokens: AuthTokens }>> {
-    const response = await httpClient.post<{ user: User; tokens: AuthTokens }>('/auth/register', {
+  static async register(username: string, password: string): Promise<ApiResponse<AuthResponse>> {
+    const response = await httpClient.post<AuthResponse>('/auth/register', {
       username,
       password,
     });
     
-    if (response.success && response.data?.tokens?.accessToken) {
-      TokenManager.setToken(response.data.tokens.accessToken);
+    if (response.success && response.data?.token) {
+      TokenManager.setToken(response.data.token);
     }
     
     return response;
   }
   
-  static async login(username: string, password: string): Promise<ApiResponse<{ user: User; tokens: AuthTokens }>> {
-    const response = await httpClient.post<{ user: User; tokens: AuthTokens }>('/auth/login', {
+  static async login(username: string, password: string): Promise<ApiResponse<AuthResponse>> {
+    const response = await httpClient.post<AuthResponse>('/auth/login', {
       username,
       password,
     });
     
-    if (response.success && response.data?.tokens?.accessToken) {
-      TokenManager.setToken(response.data.tokens.accessToken);
+    if (response.success && response.data?.token) {
+      TokenManager.setToken(response.data.token);
     }
     
     return response;

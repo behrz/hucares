@@ -5,7 +5,6 @@ import { api, User as ApiUser, Group as ApiGroup } from '../utils/api'
 interface UserProfile {
   id: string
   username: string
-  email?: string
   createdAt: string
   lastCheckInDate?: string
   currentGroupId?: string
@@ -38,7 +37,6 @@ type UserStore = UserState & UserActions
 const mapApiUserToProfile = (apiUser: ApiUser, currentGroupId?: string): UserProfile => ({
   id: apiUser.id,
   username: apiUser.username,
-  email: apiUser.email,
   createdAt: apiUser.createdAt,
   currentGroupId,
 })
@@ -161,7 +159,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
   // Login existing user
   loginUser: async (username: string, password: string) => {
     if (!username.trim() || !password.trim()) {
-      set({ error: 'Username and password are required' })
+      set({ error: 'Username and PIN are required' })
       return false
     }
 
