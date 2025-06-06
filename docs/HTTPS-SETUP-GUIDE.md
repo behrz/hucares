@@ -10,7 +10,7 @@ This guide helps you set up HTTPS certificates for HuCares with custom domains. 
 
 ### **What You Already Have**
 - ✅ **Frontend**: `https://hucares.vercel.app` (Auto-SSL via Vercel)
-- ✅ **Backend**: `https://hucares.onrender.com` (Auto-SSL via Render)
+- ✅ **Backend**: `https://api.hucares.app` (Custom domain with auto-SSL via Render)
 
 ### **What You Need**
 - 🎯 **Custom Frontend**: `https://hucares.com` (Your brand)
@@ -80,7 +80,7 @@ TTL: 3600
 
 Type: CNAME
 Name: api
-Value: hucares.onrender.com
+Value: hucares.onrender.com (for API subdomain)
 TTL: 3600
 ```
 
@@ -95,7 +95,7 @@ Update your frontend to use the custom API domain:
 
 ```typescript
 // frontend/src/utils/api.ts
-const API_BASE_URL = 'https://api.hucares.com/api';
+const API_BASE_URL = 'https://api.hucares.app/api';
 ```
 
 ---
@@ -141,7 +141,7 @@ Proxy: Enabled (☁️ orange cloud)
 
 Type: CNAME
 Name: api
-Target: hucares.onrender.com
+Target: hucares.onrender.com (your Render backend URL)
 Proxy: Enabled (☁️ orange cloud)
 ```
 

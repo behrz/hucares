@@ -146,7 +146,7 @@ password_hash VARCHAR(255) NOT NULL -- Now stores 4-digit PIN hash
 
 ### **Backend (Render)**
 - ✅ **Status**: Deployed and Live
-- ✅ **Endpoint**: `https://hucares.onrender.com/api`
+- ✅ **Endpoint**: `https://api.hucares.app/api`
 - ✅ **PIN Validation**: Active
 - ✅ **Database**: Updated schema
 
