@@ -28,10 +28,13 @@ app.use(helmet({
 
 // CORS configuration
 app.use(cors({
-  origin: env.CORS_ORIGIN,
+  origin: env.NODE_ENV === 'production' 
+    ? env.CORS_ORIGIN.split(',').map(origin => origin.trim())
+    : [env.CORS_ORIGIN, 'http://localhost:3000', 'http://localhost:3001'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200, // For legacy browser support
 }));
 
 // Rate limiting
@@ -102,16 +105,22 @@ app.use('*', (req, res) => {
 // Global error handler
 app.use(errorHandler);
 
+// Server instance variable
+let server: any = null;
+
 // Graceful shutdown handling
 const gracefulShutdown = (signal: string): void => {
   logger.info(`Received ${signal}. Starting graceful shutdown...`);
   
-  const server = app.listen(env.PORT);
-  
-  server.close(() => {
-    logger.info('HTTP server closed');
+  if (server) {
+    server.close(() => {
+      logger.info('HTTP server closed');
+      process.exit(0);
+    });
+  } else {
+    logger.info('No server to close');
     process.exit(0);
-  });
+  }
 
   // Force close after 10 seconds
   setTimeout(() => {
@@ -126,7 +135,7 @@ process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 // Start server
 const startServer = (): void => {
   try {
-    const server = app.listen(env.PORT, () => {
+    server = app.listen(env.PORT, () => {
       logger.info(`🚀 HuCares Backend started successfully!`);
       logger.info(`📍 Server running on port ${env.PORT}`);
       logger.info(`🌍 Environment: ${env.NODE_ENV}`);

@@ -5,7 +5,7 @@ import { asyncHandler } from '@/middleware/errorHandler';
 import { ValidationError } from '@/middleware/errorHandler';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { env } from '@/config/env';
+import { env, CONSTANTS } from '@/config/env';
 import { db } from '@/services/database';
 
 // JWT Token generation
@@ -22,10 +22,12 @@ const generateToken = (user: { id: string; username: string }): string => {
 // Validation rules
 export const registerValidation = [
   body('username')
-    .isLength({ min: 3, max: 20 })
-    .withMessage('Username must be between 3 and 20 characters')
+    .isLength({ min: CONSTANTS.USERNAME.MIN_LENGTH, max: CONSTANTS.USERNAME.MAX_LENGTH })
+    .withMessage(`Username must be between ${CONSTANTS.USERNAME.MIN_LENGTH} and ${CONSTANTS.USERNAME.MAX_LENGTH} characters`)
     .matches(/^[a-zA-Z0-9_-]+$/)
     .withMessage('Username can only contain letters, numbers, hyphens, and underscores')
+    .trim()
+    .escape()
     .custom((value) => {
       const reserved = ['admin', 'root', 'api', 'www', 'mail', 'support', 'help', 'info'];
       if (reserved.includes(value.toLowerCase())) {
@@ -34,10 +36,11 @@ export const registerValidation = [
       return true;
     }),
   body('password')
-    .isLength({ min: 4, max: 4 })
-    .withMessage('PIN must be exactly 4 digits')
+    .isLength({ min: CONSTANTS.PASSWORD.MIN_LENGTH, max: CONSTANTS.PASSWORD.MAX_LENGTH })
+    .withMessage(`PIN must be exactly ${CONSTANTS.PASSWORD.MIN_LENGTH} digits`)
     .matches(/^\d{4}$/)
-    .withMessage('PIN must be exactly 4 digits (0-9)'),
+    .withMessage(`PIN must be exactly ${CONSTANTS.PASSWORD.MIN_LENGTH} digits (0-9)`)
+    .trim(),
 
 ];
 
@@ -45,21 +48,23 @@ export const loginValidation = [
   body('username')
     .notEmpty()
     .withMessage('Username is required')
-    .trim(),
+    .trim()
+    .escape(),
   body('password')
     .notEmpty()
-    .withMessage('Password is required'),
+    .withMessage('Password is required')
+    .trim(),
 ];
 
 export const changePasswordValidation = [
   body('currentPassword')
     .notEmpty()
     .withMessage('Current password is required'),
-  body('newPassword')
-    .isLength({ min: 4, max: 4 })
-    .withMessage('New PIN must be exactly 4 digits')
+  body('password')
+    .isLength({ min: CONSTANTS.PASSWORD.MIN_LENGTH, max: CONSTANTS.PASSWORD.MAX_LENGTH })
+    .withMessage(`New PIN must be exactly ${CONSTANTS.PASSWORD.MIN_LENGTH} digits`)
     .matches(/^\d{4}$/)
-    .withMessage('New PIN must be exactly 4 digits (0-9)'),
+    .withMessage(`New PIN must be exactly ${CONSTANTS.PASSWORD.MIN_LENGTH} digits (0-9)`),
 ];
 
 // Helper to check validation results
@@ -97,17 +102,22 @@ export const register = asyncHandler(async (req: Request, res: Response): Promis
     return;
   }
 
-  // Hash password
-  const hashedPassword = await bcrypt.hash(password, env.BCRYPT_SALT_ROUNDS);
+  // Create user with transaction for data integrity
+  const user = await db.$transaction(async (tx) => {
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, env.BCRYPT_SALT_ROUNDS);
 
-  // Create user
-  const user = await db.user.create({
-    data: {
-      username: username.toLowerCase(),
-      passwordHash: hashedPassword,
-      email: null,
-      lastLoginAt: new Date(),
-    },
+    // Create user
+    const newUser = await tx.user.create({
+      data: {
+        username: username.toLowerCase(),
+        passwordHash: hashedPassword,
+        email: null,
+        lastLoginAt: new Date(),
+      },
+    });
+
+    return newUser;
   });
 
   // Generate token
@@ -275,7 +285,7 @@ export const changePassword = asyncHandler(async (req: Request, res: Response): 
     return;
   }
 
-  const { currentPassword, newPassword } = req.body;
+  const { currentPassword, password } = req.body;
 
   logger.info(`🔑 Password change attempt for user: ${req.user.username}`);
 
@@ -306,7 +316,7 @@ export const changePassword = asyncHandler(async (req: Request, res: Response): 
   }
 
   // Hash new password
-  const hashedNewPassword = await bcrypt.hash(newPassword, env.BCRYPT_SALT_ROUNDS);
+  const hashedNewPassword = await bcrypt.hash(password, env.BCRYPT_SALT_ROUNDS);
 
   // Update password
   await db.user.update({

@@ -170,8 +170,7 @@ function App() {
               />
             </div>
           </div>
-                 )}
-        </div>
+        )}
         
         {/* PWA Install Prompt */}
         <InstallPrompt />
@@ -179,7 +178,8 @@ function App() {
         {/* Toast Notifications */}
         <ToastContainer />
       </div>
-    )
-  }
+    </div>
+  )
+}
 
 export default App 

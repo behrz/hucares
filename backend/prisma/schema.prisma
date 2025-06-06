@@ -30,6 +30,8 @@ model User {
   @@index([username])
   @@index([email])
   @@index([isActive])
+  @@index([createdAt])
+  @@index([lastLoginAt])
 }
 
 // Groups table - Friend groups for check-ins
@@ -99,6 +101,9 @@ model CheckIn {
   @@index([userId, groupId])
   @@index([weekStartDate])
   @@index([groupId, weekStartDate])
+  @@index([userId, weekStartDate])
+  @@index([submittedAt])
+  @@index([createdAt])
 }
 
 // Weekly group summaries - Aggregated data for group analytics
