@@ -4,6 +4,20 @@
 
 ---
 
+## 🚨 **Latest Updates - December 2024**
+
+### **Major Security & Stability Overhaul**
+We've implemented comprehensive security and performance improvements:
+
+- **🔒 Enhanced Security**: JWT security, input sanitization, improved rate limiting
+- **🚀 Performance**: Critical database indexes, memory leak fixes, query optimization  
+- **🛡️ Stability**: Transaction safety, error handling, CORS improvements
+- **📋 Code Quality**: Centralized constants, standardized validation
+
+**→ See [docs/SECURITY.md](docs/SECURITY.md) for complete security documentation**
+
+---
+
 ## 🌟 **App Overview**
 
 HuCares is a private, intimate social network designed for small groups of friends to regularly check in with each other through structured wellness surveys. The app transforms personal well-being data into a shared celebration of life, fostering connection and mutual support through weekly or bi-weekly "HuCares scores."
@@ -55,14 +69,13 @@ Users complete a 4-question wellness survey:
 - **React Hook Form** for form handling
 - **Chart.js/Recharts** for data visualization
 
-### Backend Stack
-- **Node.js** with Express.js
-- **TypeScript** throughout
-- **PostgreSQL** for primary database
-- **Prisma** ORM for database operations
-- **JWT** for authentication
-- **bcrypt** for password hashing
-- **Express Rate Limiting** for security
+### Backend Stack (Enhanced December 2024)
+- **Node.js** with Express.js and TypeScript throughout
+- **PostgreSQL/SQLite** for database with Prisma ORM
+- **Security**: JWT authentication, bcrypt (12 rounds), enhanced rate limiting
+- **Performance**: Database transactions, optimized queries, memory leak prevention
+- **Validation**: Input sanitization, centralized constants, structured error handling
+- **Infrastructure**: CORS security, production environment validation
 
 ### Infrastructure
 - **Frontend**: Vercel/Netlify deployment
@@ -151,11 +164,12 @@ interface WeeklyGroupSummary {
 
 ## 🔐 **Security & Privacy**
 
-### Authentication
-- Simple username + 4-digit PIN authentication
-- JWT tokens with reasonable expiration (7 days)
-- PIN requirements: exactly 4 digits (0-9)
-- Rate limiting on login attempts
+### Enhanced Authentication (Updated December 2024)
+- Simple username + 4-digit PIN authentication with production-grade security
+- JWT tokens with secure secrets (no defaults in production)
+- PIN requirements: exactly 4 digits (0-9) with input sanitization
+- Rate limiting: 100 requests per 15 minutes (enhanced from 1000)
+- Transaction-safe user registration preventing race conditions
 
 ### Privacy Controls
 - **Groups are invitation-only** via access codes
@@ -164,12 +178,16 @@ interface WeeklyGroupSummary {
 - **Account deletion**: Complete data removal
 - **Group leaving**: Historical data preserved but anonymized
 
-### Data Security
+### Data Security (Enhanced December 2024)
 - All 4-digit PINs hashed with bcrypt (12 rounds)
 - HTTPS enforced across all endpoints
-- Input validation and sanitization
-- SQL injection prevention via Prisma ORM
-- XSS protection with proper output encoding
+- **New**: Comprehensive input sanitization (trim, escape) for XSS prevention
+- **New**: Enhanced CORS configuration for multi-origin security
+- **New**: Critical database indexes for secure, fast queries
+- SQL injection prevention via Prisma ORM with transaction safety
+- Memory leak prevention and improved error handling
+
+**→ Full security details: [docs/SECURITY.md](docs/SECURITY.md)**
 
 ---
 
@@ -339,11 +357,21 @@ CREATE TABLE weekly_group_summaries (
 );
 ```
 
-### Indexes
+### Performance Indexes (Updated December 2024)
 ```sql
--- Performance indexes
+-- Critical performance and security indexes
+CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX idx_users_active ON users(is_active);
+CREATE INDEX idx_users_created_at ON users(created_at);
+CREATE INDEX idx_users_last_login ON users(last_login_at);
+
 CREATE INDEX idx_check_ins_user_group ON check_ins(user_id, group_id);
 CREATE INDEX idx_check_ins_week ON check_ins(week_start_date);
+CREATE INDEX idx_check_ins_user_week ON check_ins(user_id, week_start_date);
+CREATE INDEX idx_check_ins_group_week ON check_ins(group_id, week_start_date);
+CREATE INDEX idx_check_ins_submitted ON check_ins(submitted_at);
+CREATE INDEX idx_check_ins_created ON check_ins(created_at);
+
 CREATE INDEX idx_group_memberships_user ON group_memberships(user_id);
 CREATE INDEX idx_group_memberships_group ON group_memberships(group_id);
 ```

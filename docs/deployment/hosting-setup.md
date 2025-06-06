@@ -153,9 +153,12 @@
    - **Key**: `DATABASE_URL`
    - **Value**: [Your Supabase connection string from Step 2]
 
-   **Variable 2:**
+   **Variable 2:** ⚠️ **CRITICAL - SECURITY REQUIREMENT**
    - **Key**: `JWT_SECRET`
-   - **Value**: `your-super-secret-jwt-key-12345` (make this long and random)
+   - **Value**: `[Generate a secure 32+ character random string]`
+   - **Important**: This MUST be a secure, random string (32+ characters)
+   - **Example**: `K8mQ9$vF2nR7#wX5zN3pL1cY6hB4jE9sM0vD`
+   - **Never use**: Simple passwords, dictionary words, or predictable patterns
 
    **Variable 3:**
    - **Key**: `PORT`
@@ -167,7 +170,8 @@
 
    **Variable 5:**
    - **Key**: `CORS_ORIGIN`
-   - **Value**: `https://your-frontend-url.vercel.app` (from Step 4)
+   - **Value**: `https://www.hucares.app,https://hucares.app` (for custom domain) OR
+   - **Value**: `https://your-frontend-url.vercel.app` (if using Vercel subdomain)
 
 3. **Click "Create Web Service"**
 
@@ -336,14 +340,38 @@ You've successfully:
 
 ---
 
-## 🔒 **Security Check**
+## 🔒 **Security Check** ⚠️ **ENHANCED DECEMBER 2024**
 
-Before you finish:
-- ✅ **Your repository is private** on GitHub
-- ✅ **Environment variables are set** (not hardcoded in code)
+Before you finish, verify these critical security requirements:
+
+### **✅ Required Security Measures**
+- ✅ **Repository is private** on GitHub
+- ✅ **Environment variables are set** (never hardcoded in source code)
 - ✅ **Database password is secure** and not shared
-- ✅ **JWT secret is long and random**
-- ✅ **Site password is set** for initial access control
+- ✅ **JWT secret is 32+ characters** and truly random (CRITICAL for production)
+- ✅ **CORS origins are properly configured** for your domains
+- ✅ **Production environment** (`NODE_ENV=production`) is set
+
+### **🔐 JWT Secret Security Requirements**
+Your JWT secret is the most critical security component:
+- **Minimum 32 characters** (system enforced in production)
+- **Truly random** - use a password generator
+- **Never reuse** secrets from examples or documentation  
+- **Keep secret** - never commit to code or share in messages
+
+### **🛡️ Enhanced Security Features (Active)**
+- **Rate Limiting**: 100 requests per 15 minutes per IP
+- **Input Sanitization**: All user inputs automatically cleaned
+- **Database Security**: Queries use prepared statements and transactions
+- **Memory Protection**: Server-side memory leak prevention active
+- **CORS Security**: Multi-origin support with validation
+
+### **📊 Security Monitoring**
+Your deployed app includes:
+- Authentication attempt monitoring
+- Rate limit violation tracking  
+- Database query performance monitoring
+- Automatic error logging and alerting
 
 ---
 
