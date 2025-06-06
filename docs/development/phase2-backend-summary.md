@@ -17,8 +17,7 @@ Transform HuCares from localStorage to real backend with authentication and real
 CREATE TABLE users (
   id UUID PRIMARY KEY,
   username VARCHAR(20) UNIQUE NOT NULL,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  password_hash VARCHAR(255) NOT NULL,
+  password_hash VARCHAR(255) NOT NULL, -- 4-digit PIN, bcrypt hashed
   created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -46,8 +45,8 @@ CREATE TABLE check_ins (
 ## 🔐 **AUTH ENDPOINTS**
 
 ```typescript
-POST /api/v1/auth/register  // Create account
-POST /api/v1/auth/login     // Login with email/password
+POST /api/v1/auth/register  // Create account (username + PIN)
+POST /api/v1/auth/login     // Login with username + PIN
 POST /api/v1/auth/refresh   // Refresh JWT token
 POST /api/v1/auth/logout    // Logout
 ```
@@ -90,10 +89,10 @@ socket.emit('group-updated', { groupId, type, data })
 - [ ] Health check endpoint
 
 ### Week 3-4: Authentication  
-- [ ] User registration/login
-- [ ] JWT token system
-- [ ] Password reset
-- [ ] Rate limiting
+- [x] User registration/login (PIN-based)
+- [x] JWT token system
+- [x] PIN validation and hashing
+- [x] Rate limiting
 
 ### Week 5-7: Core API
 - [ ] User profile CRUD

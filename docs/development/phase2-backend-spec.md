@@ -1,5 +1,18 @@
 # PHASE 2: Backend & Real-Time Infrastructure - Technical Specification
 
+> ⚠️ **DEPRECATION NOTICE**: This document is **HISTORICAL** and contains outdated information.
+> 
+> **Current System**: HuCares now uses username + 4-digit PIN authentication (no email required).
+> 
+> **For Current Info See**:
+> - 📋 [PIN Authentication Migration Guide](../PIN-AUTHENTICATION-MIGRATION.md)
+> - 📊 [Phase 2 Backend Summary](./phase2-backend-summary.md) (updated)
+> - 📚 [Main README](../../README.md) (current architecture)
+> 
+> This file is preserved for historical reference only.
+
+---
+
 ## 🎯 **PHASE OVERVIEW**
 
 **Objective**: Transform HuCares from localStorage-only to a real backend with authentication, real-time sync, and cloud data persistence.
